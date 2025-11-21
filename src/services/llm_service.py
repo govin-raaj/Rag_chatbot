@@ -15,8 +15,15 @@ class LLmService:
         self.query = query
         self.vector_store = vector_store
 
-        self.retriever = self.vector_store.vector_store.as_retriever(search_type="similarity", search_kwargs={"k": 4})
+        self.retriever = None
 
+        try:
+            if vector_store and hasattr(vector_store, "vector_store"):
+                self.retriever = vector_store.vector_store.as_retriever(
+                    search_type="similarity", search_kwargs={"k": 4}
+                )
+        except Exception:
+            self.retriever = None
 
 
     def query_refinement(self) -> str:
@@ -39,13 +46,26 @@ class LLmService:
     def get_documents(self) -> List[Document]:
         query=self.query_refinement()
 
-        results = self.retriever.get_relevant_documents(query)
+        if self.retriever is None:
+            return []   # No documents available → RAG fallback
+
+        try:
+            results = self.retriever.get_relevant_documents(query)
+        except Exception:
+            results = []
 
         return results
     
+
+    
     def generate_response(self) -> str:
         documents = self.get_documents()
-        context = "\n\n".join([doc.page_content for doc in documents])
+
+        if not documents:
+            context = "No external documents provided. Answer only from general knowledge."
+        else:
+            context = "\n\n".join([doc.page_content for doc in documents])
+        
         query=self.query_refinement()
 
         prompt = PromptTemplate(
