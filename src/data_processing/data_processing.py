@@ -1,44 +1,46 @@
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.document_loaders import PyPDFLoader, TextLoader
 import os
-import tempfile
-
-class process_data:
-    def __init__(self, file):
-        self.file = file
-
-    def process_document(self):
-        temp_dir = tempfile.mkdtemp()
-        temp_path = os.path.join(temp_dir, self.file.filename)
-    
-        try:
-        # Save file temporarily
-            self.file.save(temp_path)
-            
-            # Process based on file type
-            if self.file.filename.endswith('.pdf'):
-                loader = PyPDFLoader(temp_path)
-                documents = loader.load()
-            elif self.file.filename.endswith('.txt'):
-                loader = TextLoader(temp_path)
-                documents = loader.load()
-            else:
-                raise ValueError("Unsupported file type")
-
-            # Split text into chunks
-            text_splitter = RecursiveCharacterTextSplitter(
-                chunk_size=1000,
-                chunk_overlap=200
-            )
-            text_chunks = text_splitter.split_documents(documents)
-            
-            return text_chunks
-        
-        finally:
-        # Clean up temp file
-            if os.path.exists(temp_path):
-                os.remove(temp_path)
-            os.rmdir(temp_dir)
+from typing import List
+from langchain.schema import Document
 
 
-    
+class ProcessData:
+    """Process a saved file on disk and return a list of text chunks (langchain Documents)."""
+
+    SUPPORTED_EXT = (".pdf", ".txt")
+
+    def __init__(self, file_path: str):
+        if not isinstance(file_path, str):
+            raise TypeError("file_path must be a string path to an existing file")
+        if not os.path.exists(file_path):
+            raise FileNotFoundError(f"{file_path} does not exist")
+        self.file_path = file_path
+        self.filename = os.path.basename(file_path)
+
+    def _is_supported(self) -> bool:
+        return self.filename.lower().endswith(self.SUPPORTED_EXT)
+
+    def process_document(self) -> List[Document]:
+        if not self._is_supported():
+            raise ValueError(f"Unsupported file type for {self.filename}")
+
+        # load the file into langchain Documents
+        if self.filename.lower().endswith(".pdf"):
+            loader = PyPDFLoader(self.file_path)
+            documents = loader.load()
+        elif self.filename.lower().endswith(".txt"):
+            # TextLoader requires encoding sometimes; choose appropriate encoding
+            loader = TextLoader(self.file_path, encoding="utf-8")
+            documents = loader.load()
+        else:
+            # defensive; should never hit because of _is_supported
+            raise ValueError("Unsupported file type")
+
+        # split the text into chunks
+        text_splitter = RecursiveCharacterTextSplitter(
+            chunk_size=1000,
+            chunk_overlap=200
+        )
+        chunks = text_splitter.split_documents(documents)
+        return chunks
