@@ -2,7 +2,7 @@ from fastapi import FastAPI, UploadFile, File, HTTPException, Request
 from fastapi.responses import HTMLResponse, StreamingResponse, JSONResponse
 from src.data_processing.data_processing import ProcessData
 from src.vector_store.vector_store import VectorStore
-from src.services.llm_service import rag_app
+from src.services.llm_service import LLmService
 import os
 import pathlib
 
@@ -89,19 +89,11 @@ def home():
 @app.post("/query")
 async def query_rag(query:str):
     try:
-        CONFIG = {'configurable': {'thread_id': 'thread-1'}}
-        question = query.strip()
-
-        if not question:
-            raise HTTPException(status_code=400, detail="Question is required")
-
-        # Run LangGraph RAG agent
-        result = rag_app.invoke({"question": question}, config=CONFIG)
-
-        return {"answer": result["answer"]}
-
+        llm_service=LLmService(vector_store,query)
+        response=llm_service.generate_response()
+        return JSONResponse({"response": response}, status_code=200)
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=f"Error processing query: {e}")
     
 
 @app.get("/vectorstore_result")
