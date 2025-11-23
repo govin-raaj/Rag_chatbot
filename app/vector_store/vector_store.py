@@ -1,10 +1,11 @@
 import os
 from langchain_community.vectorstores import FAISS
 from langchain_huggingface.embeddings import HuggingFaceEmbeddings
-
+from app.logger import logging
 
 class VectorStore:
     def __init__(self, path="faiss_store"):
+        logging.info(f"Initializing VectorStore at path: {path}")
         self.path = path
         os.makedirs(path, exist_ok=True)
 
@@ -24,6 +25,7 @@ class VectorStore:
             self.vector_store = None
 
     def add_documents(self, documents):
+        logging.info(f"Adding {len(documents)} documents to VectorStore.")
         if self.vector_store is None:
             self.vector_store = FAISS.from_documents(
                 documents,

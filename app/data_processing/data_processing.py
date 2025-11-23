@@ -3,7 +3,7 @@ from langchain_community.document_loaders import PyPDFLoader, TextLoader
 import os
 from typing import List
 from langchain.schema import Document
-
+from app.logger import logging
 
 class ProcessData:
     """Process a saved file on disk and return a list of text chunks (langchain Documents)."""
@@ -11,6 +11,7 @@ class ProcessData:
     SUPPORTED_EXT = (".pdf", ".txt")
 
     def __init__(self, file_path: str):
+        logging.info(f"Initializing ProcessData for file: {file_path}")
         if not isinstance(file_path, str):
             raise TypeError("file_path must be a string path to an existing file")
         if not os.path.exists(file_path):
@@ -38,9 +39,11 @@ class ProcessData:
             raise ValueError("Unsupported file type")
 
         # split the text into chunks
+        logging.info(f"Splitting document into chunks.")
         text_splitter = RecursiveCharacterTextSplitter(
             chunk_size=1000,
             chunk_overlap=200
         )
+        logging.info(f"Document contains {len(documents)} pages/sections before splitting.")    
         chunks = text_splitter.split_documents(documents)
         return chunks

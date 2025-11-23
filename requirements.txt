@@ -1,26 +1,19 @@
-# LangChain Core
+fastapi
+uvicorn
+jinja2
+python-multipart
+
 langchain
 langchain-core
-
-# OpenAI Integration
-langchain-openai
-openai
-
-# Anthropic Integration
-langchain-anthropic
-
-# Google Gemini (PaLM) Integration
-langchain-google-genai
-google-generativeai
-
-# Hugging Face Integration
+langchain-community
 langchain-huggingface
-transformers
+langchain-groq
+
 huggingface-hub
+sentence-transformers
 
-# Environment Variable Management
-python-dotenv
+faiss-cpu
 
-# Machine Learning Utilities
-numpy
-scikit-learn
+pypdf
+
+-e .
