@@ -113,7 +113,6 @@ User Query: {query}
                
                 pass
 
-            return answer
 
         logging.info("Building memory text for prompt.")
         memory_text = self._build_memory_text()
