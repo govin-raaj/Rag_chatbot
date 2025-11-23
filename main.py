@@ -22,12 +22,12 @@ UPLOAD_DIR = "uploads"
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 def sanitize_filename(filename: str) -> str:
-    # Simple sanitize: keep only the basename (remove any path components)
+
     return pathlib.Path(filename).name
 
 @app.post("/uploadfile/")
 async def upload_file(file: UploadFile = File(...)):
-    # Basic validation
+
     if not file or not file.filename:
         return JSONResponse({"error": "No file selected"}, status_code=400)
 
@@ -40,9 +40,9 @@ async def upload_file(file: UploadFile = File(...)):
 
     upload_path = os.path.join(UPLOAD_DIR, filename)
 
-    # Save upload to disk (async-safe)
+ 
     try:
-        contents = await file.read()  # read the whole uploaded file
+        contents = await file.read()  
         with open(upload_path, "wb") as f:
             f.write(contents)
     except Exception as e:
@@ -50,12 +50,12 @@ async def upload_file(file: UploadFile = File(...)):
     finally:
         await file.close()
 
-    # Process file into chunks
+
     try:
         processor = ProcessData(upload_path)
         chunks = processor.process_document()
     except Exception as e:
-        # ensure we remove the saved file on processing failure
+
         if os.path.exists(upload_path):
             try:
                 os.remove(upload_path)
@@ -63,12 +63,11 @@ async def upload_file(file: UploadFile = File(...)):
                 pass
         raise HTTPException(status_code=500, detail=f"Error processing file: {e}")
 
-    # Add to vector store (you must have vector_store available in scope)
+
     try:
-        # vector_store.add_documents expects a list of Documents (langchain Documents)
         vector_store.add_documents(chunks)
     except Exception as e:
-        # cleanup saved file if desired
+  
         if os.path.exists(upload_path):
             try:
                 os.remove(upload_path)
@@ -76,12 +75,12 @@ async def upload_file(file: UploadFile = File(...)):
                 pass
         raise HTTPException(status_code=500, detail=f"Error adding documents: {e}")
 
-    # optionally remove the saved file after processing & storing
+
     try:
         if os.path.exists(upload_path):
             os.remove(upload_path)
     except Exception:
-        # ignore cleanup errors
+       
         pass
 
     return JSONResponse(
