@@ -5,7 +5,5 @@ load_dotenv()
 
 class Config:
     HUGGINGFACEHUB_API_KEY = os.getenv('HUGGINGFACEHUB_API_TOKEN')
-    AWS_ACCESS_KEY = os.getenv('AWS_ACCESS_KEY')
-    AWS_SECRET_KEY = os.getenv('AWS_SECRET_KEY')
-    AWS_BUCKET_NAME = os.getenv('AWS_BUCKET_NAME')
+    qroq_api_key = os.getenv('GROQ_API_KEY')
     VECTOR_DB_PATH = 'vector_db'

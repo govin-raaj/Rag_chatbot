@@ -5,15 +5,18 @@ from langchain_core.output_parsers import StrOutputParser
 from typing import List
 from langchain.memory import ConversationBufferMemory
 from langchain.chains import ConversationalRetrievalChain
+from langchain_groq import ChatGroq
+from src.config import Config
+
 
 class LLmService:
     def __init__(self, vector_store, query: str):
-        self.llm = HuggingFaceEndpoint(
-            repo_id="openai/gpt-oss-20b",
-            task="text-generation"
+        self.llm = ChatGroq(
+        model_name="llama-3.3-70b-versatile",
+        api_key=Config.qroq_api_key,
         )
 
-        self.model = ChatHuggingFace(llm=self.llm)
+        self.model = self.llm
         self.query = query
         self.vector_store = vector_store
 
