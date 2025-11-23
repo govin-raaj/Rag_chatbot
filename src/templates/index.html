@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAG Assistant</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #0f0f1e 0%, #1a1a2e 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            background: rgba(30, 30, 46, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .header {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 14px;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .upload-section {
+            background: rgba(99, 102, 241, 0.1);
+            border: 2px dashed rgba(99, 102, 241, 0.3);
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 30px;
+            transition: all 0.3s ease;
+        }
+
+        .upload-section:hover {
+            border-color: rgba(99, 102, 241, 0.6);
+            background: rgba(99, 102, 241, 0.15);
+        }
+
+        .upload-label {
+            display: inline-block;
+            cursor: pointer;
+        }
+
+        .upload-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+            opacity: 0.7;
+        }
+
+        .upload-text {
+            font-size: 16px;
+            color: #a0a0c0;
+            margin-bottom: 10px;
+        }
+
+        .file-types {
+            font-size: 12px;
+            color: #707090;
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        .selected-file {
+            display: none;
+            margin-top: 15px;
+            padding: 12px;
+            background: rgba(99, 102, 241, 0.2);
+            border-radius: 8px;
+            color: #e0e0e0;
+            font-size: 14px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 15px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .chat-section {
+            margin-top: 30px;
+        }
+
+        .chat-messages {
+            background: rgba(20, 20, 30, 0.5);
+            border-radius: 12px;
+            padding: 20px;
+            height: 400px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .chat-messages::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .chat-messages::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: rgba(99, 102, 241, 0.5);
+            border-radius: 4px;
+        }
+
+        .message {
+            margin-bottom: 20px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message-label {
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            opacity: 0.7;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .user-message .message-label {
+            color: #8b5cf6;
+        }
+
+        .assistant-message .message-label {
+            color: #6366f1;
+        }
+
+        .message-content {
+            background: rgba(40, 40, 55, 0.6);
+            padding: 15px;
+            border-radius: 10px;
+            line-height: 1.6;
+            border-left: 3px solid;
+        }
+
+        .user-message .message-content {
+            border-left-color: #8b5cf6;
+        }
+
+        .assistant-message .message-content {
+            border-left-color: #6366f1;
+        }
+
+        .empty-state {
+            text-align: center;
+            color: #606080;
+            padding: 60px 20px;
+            font-size: 14px;
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .query-input {
+            flex: 1;
+            background: rgba(40, 40, 55, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            color: #e0e0e0;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .query-input:focus {
+            outline: none;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .query-input::placeholder {
+            color: #606080;
+        }
+
+        .send-btn {
+            padding: 15px 25px;
+            white-space: nowrap;
+        }
+
+        .status-message {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .status-success {
+            background: rgba(34, 197, 94, 0.2);
+            border-left: 3px solid #22c55e;
+            color: #86efac;
+        }
+
+        .status-error {
+            background: rgba(239, 68, 68, 0.2);
+            border-left: 3px solid #ef4444;
+            color: #fca5a5;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                border-radius: 0;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .chat-messages {
+                height: 300px;
+            }
+
+            .input-group {
+                flex-direction: column;
+            }
+
+            .send-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🤖 RAG Assistant</h1>
+            <p>Upload documents and ask questions</p>
+        </div>
+
+        <div class="content">
+            <div id="statusMessage" class="status-message"></div>
+
+            <div class="upload-section">
+                <label for="fileInput" class="upload-label">
+                    <div class="upload-icon">📄</div>
+                    <div class="upload-text">Click to upload or drag and drop</div>
+                    <div class="file-types">Supports .txt and .pdf files</div>
+                </label>
+                <input type="file" id="fileInput" accept=".txt,.pdf">
+                <div id="selectedFile" class="selected-file"></div>
+                <button id="uploadBtn" class="btn" style="display: none;">Upload Document</button>
+            </div>
+
+            <div class="chat-section">
+                <div id="chatMessages" class="chat-messages">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">💬</div>
+                        <p>Upload a document to start asking questions</p>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <input 
+                        type="text" 
+                        id="queryInput" 
+                        class="query-input" 
+                        placeholder="Ask a question about your document..."
+                        disabled
+                    >
+                    <button id="sendBtn" class="btn send-btn" disabled>Send</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const fileInput = document.getElementById('fileInput');
+        const selectedFileDiv = document.getElementById('selectedFile');
+        const uploadBtn = document.getElementById('uploadBtn');
+        const statusMessage = document.getElementById('statusMessage');
+        const chatMessages = document.getElementById('chatMessages');
+        const queryInput = document.getElementById('queryInput');
+        const sendBtn = document.getElementById('sendBtn');
+
+        let selectedFile = null;
+        let documentUploaded = false;
+
+        fileInput.addEventListener('change', (e) => {
+            selectedFile = e.target.files[0];
+            if (selectedFile) {
+                selectedFileDiv.textContent = `Selected: ${selectedFile.name}`;
+                selectedFileDiv.style.display = 'block';
+                uploadBtn.style.display = 'inline-block';
+            }
+        });
+
+        uploadBtn.addEventListener('click', async () => {
+            if (!selectedFile) return;
+
+            const formData = new FormData();
+            formData.append('file', selectedFile);
+
+            uploadBtn.disabled = true;
+            uploadBtn.innerHTML = '<span class="loading"></span>';
+
+            try {
+                const response = await fetch('/uploadfile/', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    showStatus(`✓ Document uploaded successfully! ${data.chunks} chunks processed.`, 'success');
+                    documentUploaded = true;
+                    queryInput.disabled = false;
+                    sendBtn.disabled = false;
+                    chatMessages.innerHTML = '';
+                    selectedFileDiv.style.display = 'none';
+                    uploadBtn.style.display = 'none';
+                    fileInput.value = '';
+                } else {
+                    showStatus(`✗ Error: ${data.error || 'Upload failed'}`, 'error');
+                }
+            } catch (error) {
+                showStatus(`✗ Error: ${error.message}`, 'error');
+            } finally {
+                uploadBtn.disabled = false;
+                uploadBtn.textContent = 'Upload Document';
+            }
+        });
+
+        sendBtn.addEventListener('click', sendQuery);
+        queryInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendQuery();
+        });
+
+        async function sendQuery() {
+            const query = queryInput.value.trim();
+            if (!query || !documentUploaded) return;
+
+            addMessage(query, 'user');
+            queryInput.value = '';
+            sendBtn.disabled = true;
+            queryInput.disabled = true;
+
+            addMessage('<span class="loading"></span> Thinking...', 'assistant', true);
+
+            try {
+                const formData = new FormData();
+                formData.append('query', query);
+
+                const response = await fetch('/query', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                removeLoadingMessage();
+
+                if (response.ok) {
+                    addMessage(data.response, 'assistant');
+                } else {
+                    addMessage(`Error: ${data.detail || 'Query failed'}`, 'assistant');
+                }
+            } catch (error) {
+                removeLoadingMessage();
+                addMessage(`Error: ${error.message}`, 'assistant');
+            } finally {
+                sendBtn.disabled = false;
+                queryInput.disabled = false;
+                queryInput.focus();
+            }
+        }
+
+        function addMessage(content, type, isLoading = false) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}-message`;
+            if (isLoading) messageDiv.id = 'loadingMessage';
+            
+            messageDiv.innerHTML = `
+                <div class="message-label">${type === 'user' ? 'You' : 'Assistant'}</div>
+                <div class="message-content">${content}</div>
+            `;
+            
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function removeLoadingMessage() {
+            const loading = document.getElementById('loadingMessage');
+            if (loading) loading.remove();
+        }
+
+        function showStatus(message, type) {
+            statusMessage.textContent = message;
+            statusMessage.className = `status-message status-${type}`;
+            statusMessage.style.display = 'block';
+            
+            setTimeout(() => {
+                statusMessage.style.display = 'none';
+            }, 5000);
+        }
+    </script>
+</body>
+</html>

@@ -1,14 +1,22 @@
 from fastapi import FastAPI, UploadFile, File, HTTPException, Request
-from fastapi.responses import HTMLResponse, StreamingResponse, JSONResponse
+from fastapi.responses import HTMLResponse, JSONResponse
 from src.data_processing.data_processing import ProcessData
 from src.vector_store.vector_store import VectorStore
 from src.services.llm_service import LLmService
 import os
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
 import pathlib
+from fastapi.params import Form as form
+
 
 app = FastAPI()
 
 vector_store = VectorStore()
+
+app.mount("/static", StaticFiles(directory="src/static"), name="static")
+
+templates = Jinja2Templates(directory="src/templates")
 
 UPLOAD_DIR = "uploads"
 os.makedirs(UPLOAD_DIR, exist_ok=True)
@@ -81,13 +89,12 @@ async def upload_file(file: UploadFile = File(...)):
         status_code=200
     )
 
-@app.get("/")
-def home():
-    return JSONResponse({'message': 'Welcome to the RAG Chatbot API'}), 200
-    
+@app.get("/", response_class=HTMLResponse) 
+async def home(request: Request): 
+    return templates.TemplateResponse("index.html", {"request": request})  
 
 @app.post("/query")
-async def query_rag(query:str):
+async def query_rag(query:str= form(...)):
     try:
         llm_service=LLmService(vector_store,query)
         response=llm_service.generate_response()
