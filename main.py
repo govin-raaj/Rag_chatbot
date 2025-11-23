@@ -8,7 +8,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 import pathlib
 from fastapi.params import Form as form
-
+import uvicorn
 
 app = FastAPI()
 
@@ -113,3 +113,5 @@ def vectorstore_result(query: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error during similarity search: {e}")
     
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=8080)
