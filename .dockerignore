@@ -1,0 +1,42 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Environments
+env/
+.venv/
+venv/
+*.egg-info
+.eggs/
+
+# Build artifacts
+build/
+dist/
+*.spec
+
+# Logs
+logs/
+*.log
+
+# Data folders
+faiss_store/
+uploads/
+data/
+notebooks/
+
+# Git
+.git/
+.gitignore
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# Docker
+Dockerfile
+dockerfile
+
+# Ignore everything except source code
+

@@ -1,8 +1,8 @@
 from fastapi import FastAPI, UploadFile, File, HTTPException, Request
 from fastapi.responses import HTMLResponse, JSONResponse
-from data_processing.data_processing import ProcessData
-from vector_store.vector_store import VectorStore
-from services.llm_service import LLmService
+from app.data_processing.data_processing import ProcessData
+from app.vector_store.vector_store import VectorStore
+from app.services.llm_service import LLmService
 import os
 from fastapi.templating import Jinja2Templates
 import pathlib

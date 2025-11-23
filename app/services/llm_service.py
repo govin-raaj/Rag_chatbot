@@ -1,4 +1,3 @@
-from langchain_huggingface import ChatHuggingFace, HuggingFaceEndpoint
 from langchain.schema import Document
 from langchain.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
@@ -6,7 +5,7 @@ from typing import List
 from langchain.memory import ConversationBufferMemory
 from langchain.chains import ConversationalRetrievalChain
 from langchain_groq import ChatGroq
-from config import Config
+from app.config import Config
 from app.logger import logging
 
 class LLmService:

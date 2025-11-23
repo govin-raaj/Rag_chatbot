@@ -1,19 +1,17 @@
-fastapi
-uvicorn
-jinja2
-python-multipart
-
+fastapi==0.121.3
+langchain_text_splitters
 langchain
 langchain-core
 langchain-community
-langchain-huggingface
 langchain-groq
+langchain-huggingface
+langchainhub
 
-huggingface-hub
-sentence-transformers
+python-dotenv==1.2.1
+uvicorn==0.38.0
+jinja2
 
 faiss-cpu
+sentence-transformers
+huggingface-hub
 
-pypdf
-
--e .
