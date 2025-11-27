@@ -34,104 +34,72 @@ This project is designed not only as a functional RAG system, but as a portfolio
 ```
 
 
-# 📄 Document Ingestion Pipeline
+## 📄 Document Ingestion Pipeline
 
-This project supports PDF and text file ingestion:
-
-✔ Extraction & Processing Steps
-
-Upload PDF/TXT files via UI
-
-Extract raw text
-
-Apply RecursiveCharacterTextSplitter
-
-Generate embeddings using:
-
-sentence-transformers/all-MiniLM-L6-v2
-
-Store embeddings in FAISS vector store
-
-Automatically retrieve relevant chunks during user queries
+ **This project supports PDF and text file ingestion:**
+ **✔ Extraction & Processing Steps**
+* Upload PDF/TXT files via UI
+* Extract raw text
+* Apply RecursiveCharacterTextSplitter
+* Generate embeddings using:
+* sentence-transformers/all-MiniLM-L6-v2
+* Store embeddings in FAISS vector store
+* Automatically retrieve relevant chunks during user queries
 
 
 
-# 🔍 Conversational Retrieval Chain
+## 🔍 Conversational Retrieval Chain
 
-The chatbot uses:
-
-Groq LLM (LLaMA 3, Mixtral) for response generation
-
-LangChain for routing messages, tool composition, and state graph
-
-FAISS for relevant passage retrieval
+**The chatbot uses:**
+* Groq LLM (LLaMA 3, Mixtral) for response generation
+* LangChain for routing messages, tool composition, and state graph
+* FAISS for relevant passage retrieval
 
 
 
-# 📝 Logging & Error Handling
+## 📝 Logging & Error Handling
 
-Integrated logging supports:
-
-File upload logging
-
-PDF parsing failures
-
-Embedding pipeline tracking
-
-Query tracing and LLM response logging
+**Integrated logging supports:**
+* File upload logging
+* PDF parsing failures
+* Embedding pipeline tracking
+* Query tracing and LLM response logging
 
 
 
 
-# ☁️ AWS Deployment (CI/CD)
+## ☁️ AWS Deployment (CI/CD)
 
-Your project includes a complete CI/CD pipeline using GitHub Actions.
+**Your project includes a complete CI/CD pipeline using GitHub Actions.**
 
-Workflow tasks:
+**Workflow tasks:**
+* Build Docker image
+* Push to AWS ECR
+* Trigger deployment job
+* EC2 (self-hosted runner) pulls latest image
+* Restarts container with new version
 
-Build Docker image
 
-Push to AWS ECR
+## 🔑 Required GitHub Secrets
 
-Trigger deployment job
-
-EC2 (self-hosted runner) pulls latest image
-
-Restarts container with new version
-
-🔑 Required GitHub Secrets
-
-AWS_ACCESS_KEY_ID
-
-AWS_SECRET_ACCESS_KEY
-
-AWS_DEFAULT_REGION
-
-ECR_REPO
-
-GROQ_API_KEY
+* AWS_ACCESS_KEY_ID
+* AWS_SECRET_ACCESS_KEY
+* AWS_DEFAULT_REGION
+* ECR_REPO
+* GROQ_API_KEY
 
 
 
 
-# 📊 Features Summary
-
-✅ RAG-based Question Answering
-
-✅ PDF/Text file uploads
-
-✅ FAISS-based semantic search
-
-✅ Groq-powered LLM responses
-
-✅ Modular architecture
-
-✅ Dockerized backend
-
-✅ GitHub Actions CI/CD
-
-✅ AWS EC2 deployment
-
+## 📊 Features Summary
+* ✅ RAG-based Question Answering
+* ✅ PDF/Text file uploads
+* ✅ FAISS-based semantic search
+* ✅ Groq-powered LLM responses
+* ✅ Modular architecture
+* ✅ Dockerized backend
+* ✅ GitHub Actions CI/CD
+* ✅ AWS EC2 deploymen* 
 
 
 
