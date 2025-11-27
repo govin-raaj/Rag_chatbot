@@ -1,178 +1,139 @@
-📚 RAG Chatbot – FastAPI + LangChain + Groq + FAISS + HuggingFace
+# 🤖 RAG Chatbot – FastAPI | LangChain | Groq | HuggingFace | FAISS
 
-A production-ready Retrieval-Augmented Generation (RAG) chatbot that supports PDF/text uploads, document embedding, vector storage, and conversational Q&A using Groq LLMs, HuggingFace embeddings, and FAISS vector store, deployed with Docker + GitHub Actions CI/CD + AWS EC2/ECR.
+An end-to-end RAG (Retrieval-Augmented Generation) system demonstrating modern AI engineering practices — from document ingestion, text chunking, embedding generation, vector storage, semantic search, conversational response generation, Dockerization, CI/CD, to AWS EC2 deployment.
 
-🚀 Features
+This project is designed not only as a functional RAG system, but as a portfolio showcase demonstrating:
 
-Upload PDF/Text files
+✅ **AI Engineering** (LLM orchestration, embedding models, vector search)  
+✅ **Backend Development** (FastAPI, routing, file handling, HTML templating)  
+✅ **MLOps / LLMOps** (CI/CD, ECR push, EC2 deployment, Docker)  
+✅ **Cloud & DevOps** (AWS EC2, ECR, IAM, GitHub Actions runners)  
+✅ **Software Engineering** (logging, modular structure, environment config)
 
-Extract text & split into chunks
+---
 
-Generate embeddings using Sentence Transformers
+## 📂 Project Structure
+.
+├── app/
+│   ├── main.py                     # FastAPI application entrypoint
+│   ├── config.py                   # Environment & API config
+│   ├── logger.py                   # Application-wide logging
+│   ├── templates/                  # Jinja2 HTML templates
+│   ├── static/                     # CSS/JS frontend assets
+│   ├── data_processing/
+│   │     └── data_processing.py    # PDF/Text loading + text splitting
+│   ├── vector_store/
+│   │     └── vector_store.py       # FAISS and embeddings management
+│
+├── uploads/                        # Uploaded user files
+├── Dockerfile                      # Docker build configuration
+├── requirements.txt                # Python dependencies
+├── .github/workflows/deploy.yml    # CI/CD Pipeline
+└── README.md
 
-Store & retrieve vectors using FAISS
 
-Natural-language querying using Groq LLM (LLaMA / Mixtral)
+# 📄 Document Ingestion Pipeline
 
-FastAPI backend with HTML UI (Jinja templates)
+This project supports PDF and text file ingestion:
 
-Fully containerized with Docker
+✔ Extraction & Processing Steps
 
-Automated CI/CD via GitHub Actions → ECR → EC2 deployment
+Upload PDF/TXT files via UI
 
-Persistent uploads directory
+Extract raw text
 
-🗂 Project Structure
-app/
- ├── main.py                   # FastAPI entry point
- ├── config.py                 # App configuration / env vars
- ├── logger.py                 # Custom logger
- ├── templates/                # Jinja2 HTML templates
- ├── static/                   # CSS/JS assets
- ├── data_processing/
- │     └── data_processing.py  # File parsing + chunking
- ├── vector_store/
- │     └── vector_store.py     # FAISS + embeddings logic
-uploads/                       # Uploaded PDF/text files
-Dockerfile                     # Production container build
-requirements.txt               # Python dependencies
-.github/workflows/deploy.yml  # CI/CD workflow
+Apply RecursiveCharacterTextSplitter
 
-⚙️ Requirements
+Generate embeddings using:
 
-Python 3.11
+sentence-transformers/all-MiniLM-L6-v2
 
-Docker
+Store embeddings in FAISS vector store
 
-AWS account (ECR + EC2)
+Automatically retrieve relevant chunks during user queries
 
-GitHub Actions runner (self-hosted on EC2 if using CD)
 
-🔧 Installation (Local)
-1️⃣ Clone the project
-git clone https://github.com/<your-username>/<repo>.git
-cd <repo>
 
-2️⃣ Create virtual environment
-python -m venv venv
-source venv/bin/activate   # Windows: venv\Scripts\activate
+# 🔍 Conversational Retrieval Chain
 
-3️⃣ Install dependencies
-pip install --upgrade pip
-pip install -r requirements.txt
+The chatbot uses:
 
-4️⃣ Run FastAPI
-uvicorn app.main:app --host 0.0.0.0 --port 8000
+Groq LLM (LLaMA 3, Mixtral) for response generation
 
+LangChain for routing messages, tool composition, and state graph
 
-Visit:
+FAISS for relevant passage retrieval
 
-http://localhost:8000
 
-🐳 Running With Docker
-Build image
-docker build -t rag_bot:latest .
 
-Run container
-docker run --rm -it -p 8000:8000 rag_bot:latest
+# 📝 Logging & Error Handling
 
+Integrated logging supports:
 
-🌐 API Endpoints
-GET /
+File upload logging
 
-Renders the home page UI (HTML).
+PDF parsing failures
 
-POST /query
+Embedding pipeline tracking
 
-Send a user question:
+Query tracing and LLM response logging
 
-{
-  "query": "What is attention in transformers?"
-}
 
-POST /uploadfile/
 
-Upload PDF / text files to index.
 
-🔒 Environment Variables
+# ☁️ AWS Deployment (CI/CD)
 
-Place in .env or pass via Docker/EC2 environment:
+Your project includes a complete CI/CD pipeline using GitHub Actions.
 
-Variable	Description
-OPENAI_API_KEY	Groq-compatible OpenAI key (Groq API)
-GROQ_API_KEY	Direct Groq API key if using langchain_groq
-AWS_ACCESS_KEY_ID	For ECR/EC2 deployment
-AWS_SECRET_ACCESS_KEY	""
-AWS_DEFAULT_REGION	AWS region
-🚀 CI/CD Pipeline (GitHub Actions → AWS ECR → EC2)
+Workflow tasks:
 
-The project includes a fully automated deployment workflow:
+Build Docker image
 
-1. On push to main:
+Push to AWS ECR
 
-GitHub Actions builds Docker image
+Trigger deployment job
 
-Pushes to AWS ECR
+EC2 (self-hosted runner) pulls latest image
 
-2. EC2 (self-hosted runner)
+Restarts container with new version
 
-Pulls latest image
+🔑 Required GitHub Secrets
 
-Stops previous container
+AWS_ACCESS_KEY_ID
 
-Restarts new version automatically
+AWS_SECRET_ACCESS_KEY
 
-Workflow file:
+AWS_DEFAULT_REGION
 
-.github/workflows/deploy.yml
+ECR_REPO
 
-🛠 Troubleshooting
-PDF upload error: pypdf missing
+GROQ_API_KEY
 
-Fixed by adding to requirements:
 
-pypdf
 
-NumPy ABI mismatch (NumPy 2.x error)
 
-Solution:
+# 📊 Features Summary
 
-numpy<2
+✅ RAG-based Question Answering
 
-FAISS installation issues
+✅ PDF/Text file uploads
 
-Use CPU version:
+✅ FAISS-based semantic search
 
-faiss-cpu
+✅ Groq-powered LLM responses
 
-Port not accessible externally
+✅ Modular architecture
 
-Check EC2 security group:
+✅ Dockerized backend
 
-Inbound → allow TCP 8000
+✅ GitHub Actions CI/CD
 
-📌 Future Improvements
+✅ AWS EC2 deployment
 
-Add vector store persistence across container rebuilds
 
-Add authentication
 
-Frontend UI improvements
 
-❤️ Credits
 
-Built using:
 
-FastAPI
 
-LangChain
 
-Groq LLM
-
-Sentence Transformers
-
-FAISS
-
-Docker
-
-AWS ECR/EC2
