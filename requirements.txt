@@ -1,10 +1,18 @@
-fastapi
-langchain
-langchain_core
-langchain_community
-langchain_groq
-langchain_huggingface
-langgraph
+sentence-transformers
+faiss-cpu
+jinja2
+pypdf
+pathlib
+numpy<2      
+python-multipart
+fastapi==0.122.0
+langchain_community==0.4.1
+langchain_core==1.1.0
+langchain_groq==1.1.0
+langchain_huggingface==1.1.0
+langchain_text_splitters==1.0.0
+langgraph==1.0.4
 python-dotenv==1.2.1
 uvicorn==0.38.0
-jinja2
+
+-e .
