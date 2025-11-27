@@ -26,19 +26,19 @@ class ProcessData:
         if not self._is_supported():
             raise ValueError(f"Unsupported file type for {self.filename}")
 
-        # load the file into langchain Documents
+       
         if self.filename.lower().endswith(".pdf"):
             loader = PyPDFLoader(self.file_path)
             documents = loader.load()
         elif self.filename.lower().endswith(".txt"):
-            # TextLoader requires encoding sometimes; choose appropriate encoding
+
             loader = TextLoader(self.file_path, encoding="utf-8")
             documents = loader.load()
         else:
-            # defensive; should never hit because of _is_supported
+    
             raise ValueError("Unsupported file type")
 
-        # split the text into chunks
+    
         logging.info(f"Splitting document into chunks.")
         text_splitter = RecursiveCharacterTextSplitter(
             chunk_size=1000,

@@ -40,3 +40,10 @@ class VectorStore:
         if self.vector_store is None:
             return []
         return self.vector_store.similarity_search(query, k=k)
+
+    def as_retriever(self, search_kwargs=None):
+        if self.vector_store is None:
+            raise RuntimeError("Vector store not initialized. Add documents first.")
+        if search_kwargs is None:
+            search_kwargs = {"k": 4}
+        return self.vector_store.as_retriever(search_kwargs=search_kwargs)
