@@ -13,6 +13,7 @@ This project is designed not only as a functional RAG system, but as a portfolio
 ---
 
 ## 📂 Project Structure
+```
 .
 ├── app/
 │   ├── main.py                     # FastAPI application entrypoint
@@ -30,6 +31,7 @@ This project is designed not only as a functional RAG system, but as a portfolio
 ├── requirements.txt                # Python dependencies
 ├── .github/workflows/deploy.yml    # CI/CD Pipeline
 └── README.md
+```
 
 
 # 📄 Document Ingestion Pipeline
