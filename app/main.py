@@ -18,7 +18,6 @@ import os
 import uvicorn
 import pathlib
 
-
 app = FastAPI()
 
 vector_store = VectorStore()
